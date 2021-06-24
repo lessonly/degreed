@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "net/http"
+require "byebug"
 
 module Degreed
   # Request encapsulates the specifics of making requests to the Degreed API
@@ -41,6 +42,20 @@ module Degreed
       req["Authorization"] = "Bearer #{@token}"
       req.body = body.to_json if body
       req["Content-Type"] = "application/json"
+
+      res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+        http.request(req)
+      end
+
+      Response.new(res).raise_on_error
+    end
+
+    def patch(uri, body:, params: nil)
+      uri = URI.parse(uri)
+      uri.query = URI.encode_www_form(params) if params
+      req = Net::HTTP::Patch.new(uri)
+      req["Authorization"] = "Bearer #{@token}" if @token
+      req.body = body.to_json if body
 
       res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
         http.request(req)

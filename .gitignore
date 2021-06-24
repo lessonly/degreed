@@ -9,3 +9,7 @@
 
 # Rubocop caching file
 .rubocop-https*
+
+
+# dont add byebug files
+.byebug_history

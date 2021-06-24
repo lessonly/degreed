@@ -11,6 +11,10 @@ module Degreed
         @token = token
       end
 
+      def dasherize(underscored_word)
+        underscored_word.tr("_", "-")
+      end
+
       # Create a course
       #
       # @see https://api.degreed.com/docs/#create-a-new-course
@@ -50,6 +54,42 @@ module Degreed
         params["filter[external_id]"] = String(external_id) if external_id
 
         request.get(content_courses_url, params: params)
+      end
+
+      # Update course
+      #
+      # @see https://api.degreed.com/docs/#update-a-specific-course
+      #
+      # @param title [String]
+      # @param external_id [String, #to_s]
+      # @param url [String]
+      # @param duration [Integer, #to_i]
+      # @param duration_type [String]
+      #   Accepted values: Seconds, Minutes, Hours, or Days
+      # @param summary [String] Optional (default: nil)
+      #
+      # @return [Degreed::Response]
+      def update(external_id:, **kwargs)
+        allowed_attributes = %w[
+          title
+          url
+          duration
+          duration-type
+          summary
+        ]
+        updated_attrs = kwargs
+          .transform_keys(&:to_s)
+          .transform_keys { |key| dasherize(key) }
+          .filter { |key| allowed_attributes.include? key }
+        body = {
+          data: {
+            type: "content/courses",
+            id: external_id,
+            attributes: updated_attrs
+          }
+        }
+
+        request.patch(content_courses_url, body: body)
       end
 
       private
