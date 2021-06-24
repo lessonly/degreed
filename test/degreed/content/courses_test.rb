@@ -123,7 +123,6 @@ module Degreed
               }
             JSON
           )
-
         response = Degreed::Content::Courses.new(token: "someoauthtoken").all(
           external_id: "1234"
         )
@@ -132,6 +131,89 @@ module Degreed
         assert_equal 200, response.code
         assert_equal "New Course", response.body["data"].first.dig("attributes", "title")
       end
+
+      def test_update_a_course_by_id
+        create_request = stub_request(:patch, "https://api.degreed.com/api/v2/content/courses/foo")
+          .with(
+            headers: {
+              "Authorization" => "Bearer someoauthtoken",
+              "content-type" => "application/json"
+            },
+            body: {
+              data: {
+                type: "content/courses",
+                id: "foo",
+                attributes: {
+                  title: "New Course Updated",
+                  obsolete: true
+                }
+              }
+            }.to_json
+          )
+          .to_return(
+            status: 200,
+            body: <<~JSON
+              {
+                "data": {
+                  "type": "content/courses",
+                  "id": "foo",
+                  "attributes": {
+                    "provider-code": null,
+                    "external-id": "arstaroisen",
+                    "degreed-url": "https://degreed.com/courses/?d=V9RVZY40PJ",
+                    "title": "New Course Updated",
+                    "summary": "A Summary Updated",
+                    "url": "https://dev.lessonly.com",
+                    "obsolete": false,
+                    "image-url": null,
+                    "language": null,
+                    "duration": 200,
+                    "duration-type": "Seconds",
+                    "cost-units": 0.0,
+                    "cost-unit-type": null,
+                    "format": null,
+                    "difficulty": null,
+                    "video-url": null,
+                    "created-at": "0001-01-01T00:00:00",
+                    "modified-at": "0001-01-01T00:00:00"
+                  },
+                  "links": {
+                    "self": "/content/courses/foo"
+                  }
+                }
+              }
+            JSON
+          )
+
+        response = Degreed::Content::Courses.new(token: "someoauthtoken").update(
+          id: "foo",
+          title: "New Course Updated",
+          obsolete: true
+        )
+
+        assert_requested create_request
+        assert_equal 200, response.code
+        assert_equal "New Course Updated", response.body.dig("data", "attributes", "title")
+      end
+
+      # def test_delete_course_by_id
+      #   create_request = stub_request(:delete, "https://api.degreed.com/api/v2/content/courses/foo")
+      #     .with(
+      #       headers: {
+      #         "Authorization" => "Bearer someoauthtoken"
+      #       }
+      #     )
+      #     .to_return(
+      #       status: 204
+      #     )
+
+      #   response = Degreed::Content::Courses.new(token: "someoauthtoken").destroy(
+      #     id: "foo"
+      #   )
+      #   assert_requested create_request
+      #   assert_equal 204, response.code
+      # end
+
     end
   end
 end
