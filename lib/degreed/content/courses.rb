@@ -28,12 +28,17 @@ module Degreed
         request.post(
           content_courses_url,
           body: {
-            title: title,
-            summary: kwargs.fetch(:summary, nil),
-            "external-id": String(external_id),
-            url: url,
-            duration: Integer(duration),
-            "duration-type": duration_type
+            data: {
+              type: "content/courses",
+              attributes: {
+                title: title,
+                summary: kwargs.fetch(:summary, nil),
+                "external-id": String(external_id),
+                url: url,
+                duration: Integer(duration),
+                "duration-type": duration_type
+              }
+            }
           }
         )
       end
