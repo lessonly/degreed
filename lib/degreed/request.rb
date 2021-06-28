@@ -50,12 +50,18 @@ module Degreed
       Response.new(res).raise_on_error
     end
 
-    def patch(uri, body:, params: nil)
+    # Patch request
+    #
+    # @param uri [String]
+    # @param body [#to_json] post body
+    #
+    # @return [Degreed::Response]
+    def patch(uri, body: nil)
       uri = URI.parse(uri)
-      uri.query = URI.encode_www_form(params) if params
       req = Net::HTTP::Patch.new(uri)
-      req["Authorization"] = "Bearer #{@token}" if @token
+      req["Authorization"] = "Bearer #{@token}"
       req.body = body.to_json if body
+      req["Content-Type"] = "application/json"
 
       res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
         http.request(req)

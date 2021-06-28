@@ -69,12 +69,13 @@ module Degreed
       # @param summary [String] Optional (default: nil)
       #
       # @return [Degreed::Response]
-      def update(external_id:, **kwargs)
+      def update(id:, **kwargs)
         allowed_attributes = %w[
           title
           url
           duration
           duration-type
+          obsolete
           summary
         ]
         updated_attrs = kwargs
@@ -84,12 +85,12 @@ module Degreed
         body = {
           data: {
             type: "content/courses",
-            id: external_id,
+            id: id,
             attributes: updated_attrs
           }
         }
 
-        request.patch(content_courses_url, body: body)
+        request.patch(content_course_url(id), body: body)
       end
 
       private
@@ -100,6 +101,10 @@ module Degreed
 
       def content_courses_url
         "#{Degreed.config.base_url}/content/courses"
+      end
+
+      def content_course_url(id)
+        "#{content_courses_url}/#{id}"
       end
     end
   end
