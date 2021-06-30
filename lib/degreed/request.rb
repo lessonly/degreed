@@ -48,5 +48,23 @@ module Degreed
 
       Response.new(res).raise_on_error
     end
+
+    # Delete request
+    #
+    # @param uri [String]
+    # @param body [#to_json] post body
+    #
+    # @return [Degreed::Response]
+    def delete(uri)
+      uri = URI.parse(uri)
+      req = Net::HTTP::Delete.new(uri)
+      req["Authorization"] = "Bearer #{@token}"
+
+      res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+        http.request(req)
+      end
+
+      Response.new(res).raise_on_error
+    end
   end
 end

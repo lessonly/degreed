@@ -52,6 +52,17 @@ module Degreed
         request.get(content_courses_url, params: params)
       end
 
+            #Delete request and make course obsolete
+      #
+      # @see https://api.degreed.com/docs/#get-all-courses
+      #
+      # @param external_id [String, #to_s] Optional filter
+      #
+      # @return [Degreed::Response]
+      def destroy(id:)
+        request.delete(content_courseq_url(id))
+      end
+
       private
 
       def request
