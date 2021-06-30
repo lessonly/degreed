@@ -195,25 +195,6 @@ module Degreed
         assert_equal 200, response.code
         assert_equal "New Course Updated", response.body.dig("data", "attributes", "title")
       end
-
-      # def test_delete_course_by_id
-      #   create_request = stub_request(:delete, "https://api.degreed.com/api/v2/content/courses/foo")
-      #     .with(
-      #       headers: {
-      #         "Authorization" => "Bearer someoauthtoken"
-      #       }
-      #     )
-      #     .to_return(
-      #       status: 204
-      #     )
-
-      #   response = Degreed::Content::Courses.new(token: "someoauthtoken").destroy(
-      #     id: "foo"
-      #   )
-      #   assert_requested create_request
-      #   assert_equal 204, response.code
-      # end
-
     end
   end
 end
