@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "net/http"
-require "byebug"
 
 module Degreed
   # Request encapsulates the specifics of making requests to the Degreed API
